@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fauji GYM </title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --obsidian: #0a0a0a;
+            --charcoal: #141414;
+            --steel: #2a2a2a;
+            --gold: #d4a853;
+            --gold-light: #e8c87a;
+            --ember: #e85d04;
+            --white: #ffffff;
+            --gray: #888888;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--obsidian);
+            color: var(--white);
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s, opacity 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.3s ease-out;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), transparent);
+            transition: all 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.98);
+            padding: 15px 60px;
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 4px;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 12px 35px;
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gold);
+            transition: left 0.3s;
+            z-index: -1;
+        }
+
+        .nav-cta:hover {
+            color: var(--obsidian);
+        }
+
+        .nav-cta:hover::before {
+            left: 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: linear-gradient(135deg, var(--obsidian) 0%, var(--charcoal) 100%);
+            will-change: transform;
+        }
+
+        .hero-image-container {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 55%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            will-change: transform;
+            filter: contrast(1.1) saturate(0.9);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--obsidian) 0%, var(--obsidian) 40%, transparent 70%),
+                linear-gradient(to top, var(--obsidian) 0%, transparent 30%);
+        }
+
+        .hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(-10px) translateX(-10px);
+            }
+
+            75% {
+                transform: translateY(-30px) translateX(5px);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            padding-left: 8%;
+            max-width: 700px;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            letter-spacing: 8px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease forwards 0.3s;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.95;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeUp 1s ease forwards 0.5s;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .line span {
+            display: inline-block;
+        }
+
+        .hero-title .highlight {
+            color: var(--gold);
+            position: relative;
+        }
+
+        .hero-title .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gold);
+            opacity: 0.5;
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--gray);
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 500px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease forwards 0.7s;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease forwards 0.9s;
+        }
+
+        .btn-primary {
+            padding: 18px 45px;
+            background: var(--gold);
+            border: none;
+            color: var(--obsidian);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 168, 83, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 18px 45px;
+            background: transparent;
+            border: 2px solid var(--steel);
+            color: var(--white);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--white);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.2s;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            animation: scrollPulse 2s infinite;
+        }
+
+        @keyframes scrollPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scaleY(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 100px 60px;
+            background: var(--charcoal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s ease;
+        }
+
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background: linear-gradient(to bottom, transparent, var(--steel), transparent);
+        }
+
+        .stat-item:last-child::after {
+            display: none;
+        }
+
+        .stat-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5rem;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        /* Programs Section */
+        .programs {
+            padding: 150px 60px;
+            background: var(--obsidian);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-tag {
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .section-desc {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .program-card {
+            position: relative;
+            height: 450px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .program-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .program-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, filter 0.6s ease;
+            filter: grayscale(0.3);
+        }
+
+        .program-card:hover img {
+            transform: scale(1.1);
+            filter: grayscale(0);
+        }
+
+        .program-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to top, var(--obsidian), transparent);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .program-icon {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .program-card:hover .program-icon {
+            background: var(--gold);
+        }
+
+        .program-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gold);
+            transition: stroke 0.3s;
+        }
+
+        .program-card:hover .program-icon svg {
+            stroke: var(--obsidian);
+        }
+
+        .program-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .program-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Trainers Section */
+        .trainers {
+            padding: 150px 60px;
+            background: var(--charcoal);
+            position: relative;
+        }
+
+        .trainers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .trainer-card {
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s ease;
+        }
+
+        .trainer-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .trainer-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            filter: grayscale(0.5);
+            transition: all 0.4s ease;
+        }
+
+        .trainer-card:hover .trainer-image {
+            filter: grayscale(0);
+        }
+
+        .trainer-info {
+            padding: 25px;
+            background: var(--obsidian);
+        }
+
+        .trainer-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .trainer-role {
+            color: var(--gold);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 150px 60px;
+            background: linear-gradient(135deg, var(--obsidian) 0%, var(--charcoal) 100%);
+            position: relative;
+        }
+
+        .pricing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid var(--steel);
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.5s ease;
+        }
+
+        .pricing-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured.visible {
+            transform: scale(1.05) translateY(0);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--gold);
+            color: var(--obsidian);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 8px 40px;
+            transform: rotate(45deg);
+        }
+
+        .pricing-type {
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .pricing-price {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4.5rem;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price span {
+            font-size: 1.5rem;
+            color: var(--gray);
+        }
+
+        .pricing-duration {
+            color: var(--gray);
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--steel);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            color: var(--gray);
+            border-bottom: 1px solid rgba(42, 42, 42, 0.5);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            padding: 18px;
+            background: transparent;
+            border: 2px solid var(--steel);
+            color: var(--white);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pricing-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .pricing-card.featured .pricing-btn {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--obsidian);
+        }
+
+        .pricing-card.featured .pricing-btn:hover {
+            background: var(--gold-light);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 150px 60px;
+            background: var(--obsidian);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials-track {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            flex: 0 0 calc(50% - 15px);
+            background: var(--charcoal);
+            padding: 50px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: all 0.6s ease;
+        }
+
+        .testimonial-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .testimonial-card:nth-child(2) {
+            transform: translateX(40px);
+        }
+
+        .testimonial-card:nth-child(2).visible {
+            transform: translateX(0);
+        }
+
+        .quote-icon {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 6rem;
+            color: var(--gold);
+            opacity: 0.2;
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+        }
+
+        .author-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+        }
+
+        .author-role {
+            color: var(--gold);
+            font-size: 0.85rem;
+        }
+
+
+        /* CTA Section */
+        .cta {
+            padding: 150px 60px;
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--obsidian) 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(212, 168, 83, 0.1) 0%, transparent 70%);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 7vw, 5rem);
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+        }
+
+        .cta-desc {
+            color: var(--gray);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        /* Email Form Styling */
+        .email-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            border: 2px solid var(--steel);
+            background: rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s;
+        }
+
+        .email-form:focus-within {
+            border-color: var(--gold);
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 18px 25px;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            outline: none;
+        }
+
+        .email-input::placeholder {
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .email-submit-btn {
+            padding: 18px 35px;
+            background: var(--gold);
+            border: none;
+            color: var(--obsidian);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .email-submit-btn:hover {
+            background: var(--gold-light);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--obsidian);
+            padding: 80px 60px 40px;
+            border-top: 1px solid var(--steel);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto 60px;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo span {
+            color: var(--gold);
+        }
+
+        .footer-desc {
+            color: var(--gray);
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border: 1px solid var(--steel);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            border-color: var(--gold);
+            background: var(--gold);
+        }
+
+        .social-link svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--gray);
+            transition: fill 0.3s;
+        }
+
+        .social-link:hover svg {
+            fill: var(--obsidian);
+        }
+
+        .footer-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        /* Footer Newsletter Specifics */
+        .footer-newsletter p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .footer-email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-email-input {
+            padding: 12px 15px;
+            background: var(--charcoal);
+            border: 1px solid var(--steel);
+            color: var(--white);
+            font-family: 'Rajdhani', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .footer-email-input:focus {
+            border-color: var(--gold);
+        }
+
+        .footer-email-btn {
+            padding: 12px;
+            background: var(--gold);
+            border: none;
+            color: var(--obsidian);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .footer-email-btn:hover {
+            background: var(--gold-light);
+        }
+
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 1px solid var(--steel);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-bottom-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .programs-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .trainers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                padding-left: 30px;
+                max-width: 90%;
+            }
+
+            .hero-image-container {
+                width: 70%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-item:nth-child(2)::after {
+                display: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card.featured.visible {
+                transform: translateY(0);
+            }
+
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .programs-grid,
+            .trainers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-track {
+                flex-direction: column;
+            }
+
+            .testimonial-card {
+                flex: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item::after {
+                display: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand {
+                max-width: 100%;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <nav>
+        <a href="#" class="logo">FAUJI<span>GYM</span></a>
+        <ul class="nav-links">
+            <li><a href="#programs">Programs</a></li>
+            <li><a href="#trainers">Trainers</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <!-- <button class="nav-cta">Join Now</button> -->
+    </nav>
+
+    <section class="hero">
+        <div class="hero-parallax-bg" data-speed="0.3"></div>
+        <div class="hero-image-container">
+            <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1200&q=80" alt="Athletic Person"
+                class="hero-image" data-speed="0.15">
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-particles" id="particles"></div>
+
+        <div class="hero-content">
+            <span class="hero-subtitle">Premium Fitness Experience</span>
+            <h1 class="hero-title">
+                <span class="line"><span>FORGE YOUR</span></span>
+                <span class="line"><span><span class="highlight">STRONGEST</span> SELF</span></span>
+            </h1>
+            <p class="hero-desc">Transform your body and mind with world-class training programs, elite coaches, and a
+                community that pushes you beyond limits.</p>
+            <div class="hero-buttons">
+                <a class="btn-primary" style="text-decoration: unset;" href="#pricing">Start Your Journey</a>
+                <!-- <button class="btn-secondary">Watch Video</button> -->
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-target="15">0</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="50">0</div>
+                <div class="stat-label">Expert Trainers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="12000">0</div>
+                <div class="stat-label">Members Worldwide</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="98">0</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="programs" id="programs">
+        <div class="section-header">
+            <span class="section-tag">What We Offer</span>
+            <h2 class="section-title">TRAINING PROGRAMS</h2>
+            <p class="section-desc">Discover our diverse range of programs designed to help you achieve your fitness
+                goals, whatever they may be.</p>
+        </div>
+        <div class="programs-grid">
+            <div class="program-card">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80"
+                    alt="Strength Training">
+                <div class="program-overlay">
+                    <div class="program-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6.5 6.5L17.5 17.5M17.5 6.5L6.5 17.5M12 2v4M12 18v4M2 12h4M18 12h4" />
+                        </svg>
+                    </div>
+                    <h3 class="program-title">STRENGTH TRAINING</h3>
+                    <p class="program-desc">Build raw power and muscle with our progressive strength programs designed
+                        for all levels.</p>
+                </div>
+            </div>
+            <div class="program-card">
+                <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80" alt="HIIT Training">
+                <div class="program-overlay">
+                    <div class="program-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                    </div>
+                    <h3 class="program-title">HIIT WORKOUTS</h3>
+                    <p class="program-desc">High-intensity interval training to maximize calorie burn and boost your
+                        metabolism.</p>
+                </div>
+            </div>
+            <div class="program-card">
+                <img src="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=600&q=80" alt="Boxing">
+                <div class="program-overlay">
+                    <div class="program-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" />
+                        </svg>
+                    </div>
+                    <h3 class="program-title">BOXING & MMA</h3>
+                    <p class="program-desc">Master combat sports with professional fighters and elite coaching staff.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trainers" id="trainers">
+        <div class="section-header">
+            <span class="section-tag">Meet The Team</span>
+            <h2 class="section-title">ELITE TRAINERS</h2>
+            <p class="section-desc">Our world-class trainers bring decades of combined experience and passion to every
+                session.</p>
+        </div>
+        <div class="trainers-grid">
+            <div class="trainer-card">
+                <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400&q=80" alt="Marcus Johnson"
+                    class="trainer-image">
+                <div class="trainer-info">
+                    <h3 class="trainer-name">MARCUS JOHNSON</h3>
+                    <span class="trainer-role">Strength & Conditioning</span>
+                </div>
+            </div>
+            <div class="trainer-card">
+                <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=400&q=80" alt="Sarah Chen"
+                    class="trainer-image">
+                <div class="trainer-info">
+                    <h3 class="trainer-name">SARAH CHEN</h3>
+                    <span class="trainer-role">HIIT & Cardio</span>
+                </div>
+            </div>
+            <div class="trainer-card">
+                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80" alt="Derek Williams"
+                    class="trainer-image">
+                <div class="trainer-info">
+                    <h3 class="trainer-name">DEREK WILLIAMS</h3>
+                    <span class="trainer-role">Boxing & MMA</span>
+                </div>
+            </div>
+            <div class="trainer-card">
+                <img src="https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=400&q=80" alt="Emma Rodriguez"
+                    class="trainer-image">
+                <div class="trainer-info">
+                    <h3 class="trainer-name">EMMA RODRIGUEZ</h3>
+                    <span class="trainer-role">Yoga & Recovery</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <span class="section-tag">Membership Plans</span>
+            <h2 class="section-title">CHOOSE YOUR PATH</h2>
+            <p class="section-desc">Flexible membership options designed to fit your lifestyle and goals.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-type">Basic</div>
+                <div class="pricing-price"><span>₹</span>1500<span>/mo</span></div>
+                <div class="pricing-duration">Gym access during staffed hours</div>
+                <ul class="pricing-features">
+                    <li>Full gym equipment access</li>
+                    <li>Locker room & showers</li>
+                    <li>Free parking</li>
+                    <li>Fitness assessment</li>
+                </ul>
+                <button class="pricing-btn">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Most Popular</div>
+                <div class="pricing-type">Pro</div>
+                <div class="pricing-price"><span>₹</span>2500<span>/mo</span></div>
+                <div class="pricing-duration">24/7 access + group classes</div>
+                <ul class="pricing-features">
+                    <li>All Basic features</li>
+                    <li>24/7 gym access</li>
+                    <li>Unlimited group classes</li>
+                    <li>Personal training session/month</li>
+                    <li>Nutrition consultation</li>
+                </ul>
+                <button class="pricing-btn">Get Started</button>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-type">Elite</div>
+                <div class="pricing-price"><span>₹</span>3000<span>/mo</span></div>
+                <div class="pricing-duration">VIP experience with all perks</div>
+                <ul class="pricing-features">
+                    <li>All Pro features</li>
+                    <li>Unlimited personal training</li>
+                    <li>Custom meal plans</li>
+                    <li>Recovery suite access</li>
+                    <li>Priority booking</li>
+                </ul>
+                <button class="pricing-btn">Get Started</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="section-header">
+            <span class="section-tag">Success Stories</span>
+            <h2 class="section-title">WHAT MEMBERS SAY</h2>
+        </div>
+        <div class="testimonials-track">
+            <div class="testimonial-card">
+                <span class="quote-icon">"</span>
+                <p class="testimonial-text">Fauji GYM transformed my life. Lost 40 pounds in 6 months and gained
+                    confidence I never knew I had. The trainers are world-class and the community is incredibly
+                    supportive.</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
+                        alt="Raj Patel" class="author-image">
+                    <div>
+                        <div class="author-name">Raj Patel</div>
+                        <div class="author-role">Member since 2025</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <span class="quote-icon">"</span>
+                <p class="testimonial-text">As a former athlete, I was skeptical about finding a gym that could
+                    challenge me. Forge exceeded every expectation. The equipment is top-tier and the atmosphere is
+                    electric.</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
+                        alt="Disha Pratapati" class="author-image">
+                    <div>
+                        <div class="author-name">Disha Pratapati</div>
+                        <div class="author-role">Member since 2025</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="contact">
+        <div class="cta-bg"></div>
+        <div class="cta-content">
+            <h2 class="cta-title">READY TO TRANSFORM?</h2>
+            <p class="cta-desc">Take the first step towards your strongest self. Book a free consultation and gym tour
+                today.</p>
+
+            <form class="email-form"
+                onsubmit="event.preventDefault(); alert('Thank you! We will contact you shortly.');">
+                <input type="email" class="email-input" placeholder="Enter your email" required>
+                <button type="submit" class="email-submit-btn">Get Started</button>
+            </form>
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-logo">FAUJI<span>GYM</span></div>
+                <p class="footer-desc">Building stronger bodies and minds since 2025. Join our community of dedicated
+                    athletes and transform your life.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-title">Programs</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Strength Training</a></li>
+                    <li><a href="#">HIIT Classes</a></li>
+                    <li><a href="#">Boxing & MMA</a></li>
+                    <li><a href="#">Yoga & Recovery</a></li>
+                    <li><a href="#">Personal Training</a></li>
+                </ul>
+            </div>
+            <div>
+                <!-- <h4 class="footer-title">Company</h4> -->
+                <!-- <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul> -->
+                <!-- Replaced Company with Newsletter -->
+                <div class="footer-newsletter">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p>Subscribe to get updates on new classes, special offers, and fitness tips.</p>
+                    <form class="footer-email-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                        <input type="email" class="footer-email-input" placeholder="Your email address" required>
+                        <button type="submit" class="footer-email-btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <!-- <h4 class="footer-title">Contact</h4> -->
+                <!-- <ul class="footer-links">
+                    <li><a href="#">Bapasitaram Circle, opposite Hari Om Auto Parts, near Jakatnaka, Paras Colony, Palitana, Gujarat 364270</a></li>
+                    <li><a href="#">Los Angeles, CA 90001</a></li>
+                    <li><a href="#">hello@forgefitness.com</a></li>
+                    <li><a href="#">6353918878</a></li>
+                </ul> -->
+                <ul class="footer-links">
+                    <!-- Address -->
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <a href="https://maps.app.goo.gl/sdCS9C5KczicJPRt9" target="_blank"
+                            onclick="logClick('address')">
+                            Bapasitaram Circle, opposite Hari Om Auto Parts, near Jakatnaka, Paras Colony, Palitana,
+                            Gujarat 364270
+                        </a>
+                    </li>
+
+                    <!-- Email -->
+                    <!-- <li>
+                        <i class="fa-regular fa-envelope"></i>
+                        <a href="mailto:hello@forgefitness.com" onclick="logClick('email')">
+                            hello@forgefitness.com
+                        </a>
+                    </li> -->
+
+                    <!-- Phone -->
+                    <li>
+                        <i class="fa-solid fa-phone"></i>
+                        <a href="tel:+916353918878" onclick="logClick('phone')">
+                            6353918878
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">2026 Fauji GYM. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <!-- <a href="#">Privacy Policy</a> -->
+                <!-- <a href="#">Terms of Service</a> -->
+                <!-- <a href="#">Cookie Settings</a> -->
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize variables first
+        let mouseX = 0;
+        let mouseY = 0;
+        let scrollY = 0;
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+        const nav = document.querySelector('nav');
+
+        // Custom Cursor
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            if (cursor && cursorFollower) {
+                cursor.style.left = mouseX - 10 + 'px';
+                cursor.style.top = mouseY - 10 + 'px';
+                cursorFollower.style.left = mouseX - 4 + 'px';
+                cursorFollower.style.top = mouseY - 4 + 'px';
+            }
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+
+        // Hide cursor on mobile
+        if (window.innerWidth < 768) {
+            if (cursor) cursor.style.display = 'none';
+            if (cursorFollower) cursorFollower.style.display = 'none';
+        }
+
+        // Parallax Effect
+        function initParallax() {
+            const parallaxElements = document.querySelectorAll('[data-speed]');
+
+            window.addEventListener('scroll', () => {
+                scrollY = window.pageYOffset;
+
+                parallaxElements.forEach(el => {
+                    const speed = parseFloat(el.dataset.speed);
+                    const yPos = -(scrollY * speed);
+                    el.style.transform = `translateY(${yPos}px)`;
+                });
+            });
+        }
+        initParallax();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Create Particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 4 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    // Animate counter
+                    if (entry.target.classList.contains('stat-item')) {
+                        const counter = entry.target.querySelector('.stat-number');
+                        if (counter && !counter.classList.contains('counted')) {
+                            counter.classList.add('counted');
+                            animateCounter(counter);
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements
+        document.querySelectorAll('.stat-item, .program-card, .trainer-card, .pricing-card, .testimonial-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.dataset.target);
+            const duration = 2000;
+            const start = 0;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(easeProgress * target);
+
+                element.textContent = current.toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = target.toLocaleString() + (target === 98 ? '%' : '+');
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Button hover effects
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                if (cursor) cursor.style.transform = 'scale(1.5)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                if (cursor) cursor.style.transform = 'scale(1)';
+            });
+        });
+
+        // Initial animation trigger
+        setTimeout(() => {
+            document.querySelectorAll('.stat-item').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                    const counter = el.querySelector('.stat-number');
+                    if (counter && !counter.classList.contains('counted')) {
+                        counter.classList.add('counted');
+                        animateCounter(counter);
+                    }
+                }, i * 200);
+            });
+        }, 500);
+    </script>
+</body>
+
+</html>
